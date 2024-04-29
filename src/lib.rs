@@ -1,6 +1,5 @@
 use std::{
     future::Future,
-    pin::Pin,
     sync::{
         atomic::{AtomicBool, Ordering},
         Arc,
@@ -15,7 +14,7 @@ struct Based {
 }
 
 impl Based {
-    fn new<
+    pub fn new<
         Fut: Future<Output = ()> + Send + 'static,
         F: FnOnce(Arc<AtomicBool>) -> Fut + Send + 'static,
     >(
