@@ -8,7 +8,7 @@ use std::{
 };
 use tokio::sync::oneshot;
 
-struct Based {
+pub struct Based {
     run: Arc<AtomicBool>,
     runtime: Option<(oneshot::Sender<()>, JoinHandle<()>)>,
 }
