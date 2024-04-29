@@ -3,7 +3,12 @@ name = "tokio_based"
 authors = ["Jonathan Nilsson <jonathan@voysys.se"]
 version = "1.0.0"
 edition = "2021"
+
+description = "BASED Async Single-threaded Execution Dispatcher"
+documentation = "https://docs.rs/tokio_based"
+readme = "README.md"
 license = "0BSD"
+repository = "https://github.com/JoNil/tokio_based"
 
 [dependencies]
 tokio = { version = "1", features = ["rt", "sync"] }
