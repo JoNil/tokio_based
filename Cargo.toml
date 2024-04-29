@@ -3,6 +3,7 @@ name = "tokio_based"
 authors = ["Jonathan Nilsson <jonathan@voysys.se"]
 version = "1.0.0"
 edition = "2021"
+license = "0BSD"
 
 [dependencies]
 tokio = { version = "1", features = ["rt", "sync"] }
