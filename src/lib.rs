@@ -1,5 +1,6 @@
 use std::{
     future::Future,
+    pin::Pin,
     sync::{
         atomic::{AtomicBool, Ordering},
         Arc,
@@ -14,10 +15,15 @@ struct Based {
 }
 
 impl Based {
-    fn new() -> Self {
+    fn new<
+        Fut: Future<Output = ()> + Send + 'static,
+        F: FnOnce(Arc<AtomicBool>) -> Fut + Send + 'static,
+    >(
+        fut: F,
+    ) -> Self {
         let (exit_sender, exit_receiver) = oneshot::channel();
-
         let run = Arc::new(AtomicBool::new(true));
+
         let runtime = Some((
             exit_sender,
             thread::spawn({
@@ -28,11 +34,9 @@ impl Based {
                         .build()
                         .unwrap();
 
-                    runtime.spawn({
-                        async move {
-                            let run = run.clone();
-                            async move { fut(run).await }
-                        }
+                    runtime.spawn(async move {
+                        let run = run.clone();
+                        fut(run).await;
                     });
 
                     runtime.block_on(async move {
