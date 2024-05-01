@@ -1,10 +1,11 @@
-BASED: BASED Async Single-threaded Execution Dispatcher
+use std::{sync::atomic::Ordering, thread, time::Duration};
+use tokio::{
+    io::{AsyncReadExt, AsyncWriteExt},
+    net::TcpListener,
+};
 
-The purpose of tokio_based is to allow you to easily spin up a single threaded tokio runtime. That will be shut down and all tasks dropped when the join handle is dropped.
-
-```rust
 struct ExampleServer {
-    join_handle: tokio_based::JoinHandle,
+    _join_handle: tokio_based::JoinHandle,
 }
 
 impl ExampleServer {
@@ -43,8 +44,17 @@ impl ExampleServer {
             }
         });
 
-        ExampleServer { join_handle }
+        ExampleServer {
+            _join_handle: join_handle,
+        }
     }
 }
 
-```
+fn main() {
+    let _example = ExampleServer::new();
+
+    // Your application probably does something more than this
+    loop {
+        thread::sleep(Duration::from_millis(1));
+    }
+}

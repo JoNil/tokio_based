@@ -1,7 +1,7 @@
 [package]
 name = "tokio_based"
 authors = ["Jonathan Nilsson <jonathan@voysys.se"]
-version = "1.0.0"
+version = "2.0.0"
 edition = "2021"
 
 description = "BASED Async Single-threaded Execution Dispatcher"
@@ -12,3 +12,6 @@ repository = "https://github.com/JoNil/tokio_based"
 
 [dependencies]
 tokio = { version = "1", features = ["rt", "sync"] }
+
+[dev-dependencies]
+tokio = { version = "1", features = ["io-util", "net"] }
