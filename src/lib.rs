@@ -13,6 +13,7 @@ use std::{
 use tokio::sync::oneshot;
 
 /// When dropped the runtime will be shutdown and all tasks dropped
+#[must_use = "Will stop immediately if dropped"]
 pub struct JoinHandle {
     run: Arc<AtomicBool>,
     runtime: Option<(oneshot::Sender<()>, thread::JoinHandle<()>)>,
@@ -32,8 +33,28 @@ pub fn spawn<
 >(
     fut: F,
 ) -> JoinHandle {
-    let (exit_sender, exit_receiver) = oneshot::channel();
     let run = Arc::new(AtomicBool::new(true));
+    spawn_with_run(run, fut)
+}
+
+/// Spawn takes a closure with a run parameter and runs the future returned by the closure
+///
+/// Example
+/// ```
+/// # use std::sync::{atomic::AtomicBool, Arc};
+/// let run = Arc::new(AtomicBool::new(true));
+/// let join_handle = tokio_based::spawn_with_run(run, |run| async move {
+///     // Do something in the async runtime
+/// });
+/// ```
+pub fn spawn_with_run<
+    Fut: Future<Output = ()> + Send + 'static,
+    F: FnOnce(Arc<AtomicBool>) -> Fut + Send + 'static,
+>(
+    run: Arc<AtomicBool>,
+    fut: F,
+) -> JoinHandle {
+    let (exit_sender, exit_receiver) = oneshot::channel();
 
     let runtime = Some((
         exit_sender,
